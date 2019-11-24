@@ -416,16 +416,16 @@ ul.noindent {   /* then in html <ul class="noindent">...</ul>*/
 
 /* (2) portrait: the main simCanvas */
 
-#contents{
+/* #contents{
   position: absolute;
   left:   0vw;
   top:   0vmin;
-  width:  99vmin;  /* same ratio as above for landscape */
-  height: 87vmin;
+  width:  99vmin;/*  same ratio as above for landscape */
+  /* height: 87vmin;
   margin-right: 0vw;
   margin-left: 0vw;
   z-index: 1;
-}
+} */
 
 
 /* (3a) portrait: position of the top elements inside simCanvas */

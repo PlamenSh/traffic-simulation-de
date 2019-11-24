@@ -20,6 +20,23 @@ function traj_y(u){ // physical coordinates
 return center_yPhys+dyPhysFromCenter;
 }
 
+function street_traj_x(u) { // physical coordinates
+  // left side (median), phys coordinates
+  var dxPhysFromCenter = u < straightLen ? straightLen - u : 
+                u > straightLen + arcLen ? u - mainroadLen + straightLen : 
+                  -arcRadius * Math.sin((u - straightLen) / arcRadius);
+
+  return center_xPhys + dxPhysFromCenter;
+}
+
+function street_traj_y(u) { // physical coordinates
+  var dyPhysFromCenter = u < straightLen ? arcRadius : 
+                u > straightLen + arcLen ? -arcRadius : 
+                  arcRadius * Math.cos((u - straightLen) / arcRadius);
+
+  return 120 + center_yPhys + dyPhysFromCenter;
+}
+
 
 
 // !! in defining dependent geometry,
@@ -46,6 +63,10 @@ return (u<rampLen-mergeLen)
 : yMergeBegin+taperMerge(u,taperLen,laneWidth,rampLen);
 }
 
+var street = new road(1, 600, 7, 3,
+  street_traj_x, street_traj_y,
+  density, speedInit, fracTruck, isRing, userCanDistortRoads);
+
 var mainroad = new road(1, mainroadLen, laneWidth, nLanes_main,
   traj_x, traj_y,
   density, speedInit, fracTruck, isRing, userCanDistortRoads);
@@ -57,6 +78,7 @@ trajRamp_x,trajRamp_y,
 // road network (network declared in canvas_gui.js)
 network[0] = mainroad;
 network[1] = ramp;
+network[2] = street;
 
 // ## Obstacle
 var virtualStandingVeh=new vehicle(2, laneWidth, ramp.roadLen-0.9*taperLen, 0, 0, "obstacle");

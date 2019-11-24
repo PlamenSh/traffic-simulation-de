@@ -60,7 +60,7 @@ var truck_width = 7;
 // width/height in css.#contents)
 //##################################################################
 
-var isSmartphone=mqSmartphone();
+var isSmartphone = false;//mqSmartphone();
 
 var refSizePhys=(isSmartphone) ? 150 : 250; // also adapt in updateDimensions
 

@@ -4,20 +4,21 @@
 // road.traj_xy(u) are generated. Then, outer traj_xy*(u) obsolete
 // and network[i].gridTrajectories(trajNet_x[i], trajNet_y[i]) called
 // after a physical change
-function traj_x(u){ // physical coordinates
-  var dxPhysFromCenter= // left side (median), phys coordinates
-(u<straightLen) ? straightLen-u
-: (u>straightLen+arcLen) ? u-mainroadLen+straightLen
-: -arcRadius*Math.sin((u-straightLen)/arcRadius);
-return center_xPhys+dxPhysFromCenter;
+function traj_x(u) { // physical coordinates
+  // left side (median), phys coordinates
+  var dxPhysFromCenter = u < straightLen ? straightLen - u : 
+                u > straightLen + arcLen ? u - mainroadLen + straightLen : 
+                  -arcRadius * Math.sin((u - straightLen) / arcRadius);
+
+  return center_xPhys + dxPhysFromCenter;
 }
 
 function traj_y(u){ // physical coordinates
-  var dyPhysFromCenter=
- (u<straightLen) ? arcRadius
-: (u>straightLen+arcLen) ? -arcRadius
-: arcRadius*Math.cos((u-straightLen)/arcRadius);
-return center_yPhys+dyPhysFromCenter;
+  var dyPhysFromCenter = u < straightLen ? arcRadius : 
+                u > straightLen + arcLen ? -arcRadius : 
+                  arcRadius * Math.cos((u - straightLen) / arcRadius);
+
+  return center_yPhys + dyPhysFromCenter;
 }
 
 function street_traj_x(u) { // physical coordinates
@@ -34,7 +35,7 @@ function street_traj_y(u) { // physical coordinates
                 u > straightLen + arcLen ? -arcRadius : 
                   arcRadius * Math.cos((u - straightLen) / arcRadius);
 
-  return 120 + center_yPhys + dyPhysFromCenter;
+  return 20 + center_yPhys + dyPhysFromCenter;
 }
 
 
@@ -88,3 +89,4 @@ ramp.veh.unshift(virtualStandingVeh);
 detectors.push(new stationaryDetector(mainroad, 0.10 * mainroadLen, 10))
 detectors.push(new stationaryDetector(mainroad, 0.60 * mainroadLen, 10))
 detectors.push(new stationaryDetector(mainroad, 0.90 * mainroadLen, 10))
+detectors.push(new stationaryDetector(street, 0.10 * mainroadLen, 10))

@@ -174,8 +174,8 @@ table.infoTable td {
   position: absolute;
   left:   0vw;
   top:   0vmin;
-  width:  112vmin; 
-  height: 99vmin;
+  width:  1650px; /*112vmin*/
+  height: 2250px; /*99vmin*/
   margin-right: 0vw;
   margin-left: 0vw;
   z-index: 1;

@@ -173,7 +173,7 @@ var vmax_col=100/3.6; // max speed for speed colormap (drawn in blue-violet)
 
 // init background image
 var background = new Image();
-background.src ='figs/backgroundGrass.jpg'; 
+background.src ='figs/SmallMammaMap.jpg'; 
 
 // init vehicle image(s)
 carImg = new Image();

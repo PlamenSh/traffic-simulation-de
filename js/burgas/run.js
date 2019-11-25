@@ -62,6 +62,9 @@ function updateSim() {
   // to the vehicles and models
   street.updateTruckFrac(fracTruck, fracTruckToleratedMismatch);
   street.updateModelsOfAllVehicles(longModelCar, longModelTruck, LCModelCar, LCModelTruck, LCModelMandatory);
+  // to the vehicles and models
+  stefan_stambolov_1.updateTruckFrac(fracTruck, fracTruckToleratedMismatch);
+  stefan_stambolov_1.updateModelsOfAllVehicles(longModelCar, longModelTruck, LCModelCar, LCModelTruck, LCModelMandatory);
 
   ramp.updateTruckFrac(fracTruck, fracTruckToleratedMismatch);
   ramp.updateModelsOfAllVehicles(longModelCar, longModelTruck, LCModelCar, LCModelTruck, LCModelMandatory);
@@ -87,6 +90,14 @@ function updateSim() {
   street.updateSpeedPositions();
   street.updateBCdown();
   street.updateBCup(qIn, dt); // argument=total inflow
+  mainroad.updateBCup(qIn, dt); // argument=total inflow
+  // (3) do central simulation update of vehicles
+  stefan_stambolov_1.updateLastLCtimes(dt);
+  stefan_stambolov_1.calcAccelerations();  
+  stefan_stambolov_1.changeLanes();         
+  stefan_stambolov_1.updateSpeedPositions();
+  stefan_stambolov_1.updateBCdown();
+  stefan_stambolov_1.updateBCup(qIn, dt); // argument=total inflow
 
   for (var i = 0; i < mainroad.nveh; i++) {
     if (mainroad.veh[i].speed < 0) {
@@ -155,6 +166,10 @@ function drawSim() {
   street.draw(roadImg1,roadImg2,scale,changedGeometry,
 		0,mainroad.roadLen,
 		movingObserver,uObs,center_xPhys,center_yPhys);
+
+  stefan_stambolov_1.draw(roadImg1,roadImg2,scale,changedGeometry,
+		0,stefan_stambolov_1.roadLen,
+		movingObserver,uObs,center_xPhys,center_yPhys);
  
   // (4) draw vehicles
   //!! all args at and after umin,umax=0,ramp.roadLen are optional
@@ -175,6 +190,11 @@ function drawSim() {
   street.drawVehicles(carImg,truckImg,obstacleImgs,scale,
 			vmin_col,vmax_col,
 			0,mainroad.roadLen,
+			movingObserver,uObs,center_xPhys,center_yPhys);
+
+  stefan_stambolov_1.drawVehicles(carImg,truckImg,obstacleImgs,scale,
+			vmin_col,vmax_col,
+			0,stefan_stambolov_1.roadLen,
 			movingObserver,uObs,center_xPhys,center_yPhys);
 
   // (5a) draw traffic objects 

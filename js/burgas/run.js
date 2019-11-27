@@ -57,61 +57,59 @@ function updateSim() {
  
   // (2) transfer effects from slider interaction and mandatory regions
   // to the vehicles and models
-  mainroad.updateTruckFrac(fracTruck, fracTruckToleratedMismatch);
-  mainroad.updateModelsOfAllVehicles(longModelCar, longModelTruck, LCModelCar, LCModelTruck, LCModelMandatory);
-  // to the vehicles and models
-  street.updateTruckFrac(fracTruck, fracTruckToleratedMismatch);
-  street.updateModelsOfAllVehicles(longModelCar, longModelTruck, LCModelCar, LCModelTruck, LCModelMandatory);
-  // to the vehicles and models
-  stefan_stambolov_1.updateTruckFrac(fracTruck, fracTruckToleratedMismatch);
-  stefan_stambolov_1.updateModelsOfAllVehicles(longModelCar, longModelTruck, LCModelCar, LCModelTruck, LCModelMandatory);
 
-  ramp.updateTruckFrac(fracTruck, fracTruckToleratedMismatch);
-  ramp.updateModelsOfAllVehicles(longModelCar, longModelTruck, LCModelCar, LCModelTruck, LCModelMandatory);
+  // ## NOT SURE but without it the canvas freezes after awhile
+  network.forEach(street => {
+    street.updateTruckFrac(fracTruck, fracTruckToleratedMismatch);
+    street.updateModelsOfAllVehicles(longModelCar, longModelTruck, LCModelCar, LCModelTruck, LCModelMandatory);
+  });
+  // end of NOT SURE !?!?
 
   // (2a) update moveable speed limits
-  network.forEach(netItem => netItem.updateSpeedlimits(trafficObjs));
+  network.forEach(street => street.updateSpeedlimits(trafficObjs));
 
   // (2b) externally impose mandatory LC behaviour
   // all ramp vehicles must change lanes to the left (last arg=false)
-  ramp.setLCMandatory(0, ramp.roadLen, false);
+  // ## LC = lane change
+  // =====================================================================
+  // ramp.setLCMandatory(0, ramp.roadLen, false);
+  // =====================================================================
 
   // (3) do central simulation update of vehicles
-  mainroad.updateLastLCtimes(dt);
-  mainroad.calcAccelerations();  
-  mainroad.changeLanes();         
-  mainroad.updateSpeedPositions();
-  mainroad.updateBCdown();
-  mainroad.updateBCup(qIn, dt); // argument=total inflow
+  // =====================================================================
+  // mainroad.updateLastLCtimes(dt); // ## not sure
+  // mainroad.calcAccelerations(); // ## Without this cars are moving one over another
+  // mainroad.changeLanes(); // ## .. Otherwise are not changing lanes
+  // mainroad.updateSpeedPositions();// ## Updates data for speed detectors
+  // mainroad.updateBCdown();// ## Exiting vehicles
+  // mainroad.updateBCup(qIn, dt);// ## Entering vehicles // argument=total inflow
+  // =====================================================================
   // (3) do central simulation update of vehicles
-  street.updateLastLCtimes(dt);
-  street.calcAccelerations();  
-  street.changeLanes();         
-  street.updateSpeedPositions();
-  street.updateBCdown();
-  street.updateBCup(qIn, dt); // argument=total inflow
-  mainroad.updateBCup(qIn, dt); // argument=total inflow
-  // (3) do central simulation update of vehicles
-  stefan_stambolov_1.updateLastLCtimes(dt);
-  stefan_stambolov_1.calcAccelerations();  
-  stefan_stambolov_1.changeLanes();         
-  stefan_stambolov_1.updateSpeedPositions();
-  stefan_stambolov_1.updateBCdown();
-  stefan_stambolov_1.updateBCup(qIn, dt); // argument=total inflow
+  // =====================================================================
+  // street.updateLastLCtimes(dt);
+  // street.calcAccelerations();  
+  // street.changeLanes();         
+  // street.updateSpeedPositions();
+  // street.updateBCdown();
+  // street.updateBCup(qIn, dt); // argument=total inflow
+  // =====================================================================
 
-  for (var i = 0; i < mainroad.nveh; i++) {
-    if (mainroad.veh[i].speed < 0) {
-        console.log(" speed " + mainroad.veh[i].speed + " of mainroad vehicle " + i + " is negative!");
-    }
-  }
+  Object.keys(streetCallbacks).forEach(streetId => streetCallbacks[streetId]());
 
-  ramp.calcAccelerations();  
-  ramp.updateSpeedPositions();
-  //ramp.updateBCdown();
-  ramp.updateBCup(qOn, dt); // argument=total inflow
+  // =====================================================================
+  // for (var i = 0; i < mainroad.nveh; i++) {
+  //   if (mainroad.veh[i].speed < 0) {
+  //       console.log(" speed " + mainroad.veh[i].speed + " of mainroad vehicle " + i + " is negative!");
+  //   }
+  // }
 
-  //template: road.mergeDiverge(newRoad,offset,uStart,uEnd,isMerge,toRight)
-  ramp.mergeDiverge(mainroad, mainRampOffset, ramp.roadLen - mergeLen, ramp.roadLen, true, false);
+  // ramp.calcAccelerations();  
+  // ramp.updateSpeedPositions();
+  // //ramp.updateBCdown();
+  // ramp.updateBCup(qOn, dt); // argument=total inflow
+  // //template: road.mergeDiverge(newRoad,offset,uStart,uEnd,isMerge,toRight)
+  // ramp.mergeDiverge(mainroad, mainRampOffset, ramp.roadLen - mergeLen, ramp.roadLen, true, false);
+  // =====================================================================
 
   // (4) update detector readings
   detectors.forEach(detector => detector.update(time, dt));
@@ -153,49 +151,21 @@ function drawSim() {
 
   var changedGeometry=userCanvasManip || hasChanged||(itime<=1)||true; 
 
-  ramp.draw(rampImg,rampImg,scale,changedGeometry,
-	    0,ramp.roadLen,
-	    movingObserver,0,
-	    center_xPhys-mainroad.traj_x(uObs)+ramp.traj_x(0),
-	    center_yPhys-mainroad.traj_y(uObs)+ramp.traj_y(0)); 
+  //  ## Draw streets
+  network.forEach(street => {
+    street.draw(roadImg1, roadImg2, scale, changedGeometry,
+      0, street.roadLen,
+      movingObserver, uObs, center_xPhys, center_yPhys);
+  });
 
-  mainroad.draw(roadImg1,roadImg2,scale,changedGeometry,
-		0,mainroad.roadLen,
-		movingObserver,uObs,center_xPhys,center_yPhys);
-
-  street.draw(roadImg1,roadImg2,scale,changedGeometry,
-		0,mainroad.roadLen,
-		movingObserver,uObs,center_xPhys,center_yPhys);
-
-  stefan_stambolov_1.draw(roadImg1,roadImg2,scale,changedGeometry,
-		0,stefan_stambolov_1.roadLen,
-		movingObserver,uObs,center_xPhys,center_yPhys);
- 
-  // (4) draw vehicles
+  // ## Draw vehicles
   //!! all args at and after umin,umax=0,ramp.roadLen are optional
-
-  ramp.drawVehicles(carImg,truckImg,obstacleImgs,scale,
-		    vmin_col,vmax_col,
-		    0,ramp.roadLen,
-		    movingObserver,0,
-		    center_xPhys-mainroad.traj_x(uObs)+ramp.traj_x(0),
-		    center_yPhys-mainroad.traj_y(uObs)+ramp.traj_y(0));
-
-
-  mainroad.drawVehicles(carImg,truckImg,obstacleImgs,scale,
-			vmin_col,vmax_col,
-			0,mainroad.roadLen,
-			movingObserver,uObs,center_xPhys,center_yPhys);
-
-  street.drawVehicles(carImg,truckImg,obstacleImgs,scale,
-			vmin_col,vmax_col,
-			0,mainroad.roadLen,
-			movingObserver,uObs,center_xPhys,center_yPhys);
-
-  stefan_stambolov_1.drawVehicles(carImg,truckImg,obstacleImgs,scale,
-			vmin_col,vmax_col,
-			0,stefan_stambolov_1.roadLen,
-			movingObserver,uObs,center_xPhys,center_yPhys);
+  network.forEach(street => {
+    street.drawVehicles(carImg, truckImg, obstacleImgs, scale,
+      vmin_col, vmax_col,
+      0, street.roadLen,
+      movingObserver, uObs, center_xPhys, center_yPhys);
+  })  
 
   // (5a) draw traffic objects 
 

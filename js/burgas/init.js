@@ -45,10 +45,10 @@ console.log("after addTouchListeners()");
 // ## Road / Vehicle sizes
 var laneWidth = 7; // remains constant => road becomes more compact for smaller
 // var laneWidthRamp=5; // main lanewidth used
-var car_length = 7; // car length in m
-var car_width = 5; // car width in m
-var truck_length = 15; // trucks
-var truck_width = 7; 
+var car_length = 4; // car length in m
+var car_width = 2; // car width in m
+var truck_length = 10; // trucks
+var truck_width = 3; 
 
 
 
@@ -105,7 +105,7 @@ var straightLen = refSizePhys * critAspectRatio - center_xPhys;
 var mainroadLen = arcLen + 2 * straightLen;
 var rampLen=rampLenRel*refSizePhys; 
 var mergeLen=0.5*rampLen;
-var mainRampOffset=mainroadLen-straightLen+mergeLen-rampLen;
+var mainRampOffset = mainroadLen - straightLen + mergeLen - rampLen;
 var taperLen=0.2*rampLen;
 var rampRadius=4*arcRadius;
 
@@ -148,6 +148,9 @@ var speedInit=20; // IC for speed
 
 
 var detectors = [];
+
+// ## Street update callbacks
+var streetCallbacks = {};
 
 //</NETWORK>
 

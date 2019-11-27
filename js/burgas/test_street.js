@@ -77,16 +77,15 @@ trajRamp_x,trajRamp_y,
 0*density, speedInit, fracTruck, isRing,userCanDistortRoads);
 
 // road network (network declared in canvas_gui.js)
-network[0] = mainroad;
-network[1] = ramp;
-network[2] = street;
+network.push(mainroad);
+network.push(ramp);
+network.push(street);
 
 // ## Obstacle
-var virtualStandingVeh=new vehicle(2, laneWidth, ramp.roadLen-0.9*taperLen, 0, 0, "obstacle");
+var virtualStandingVeh = new vehicle(2, laneWidth, ramp.roadLen-0.9*taperLen, 0, 0, "obstacle");
 ramp.veh.unshift(virtualStandingVeh);
 
-
+// ## Waypoint speed detectors
 detectors.push(new stationaryDetector(mainroad, 0.10 * mainroadLen, 10))
 detectors.push(new stationaryDetector(mainroad, 0.60 * mainroadLen, 10))
 detectors.push(new stationaryDetector(mainroad, 0.90 * mainroadLen, 10))
-detectors.push(new stationaryDetector(street, 0.10 * mainroadLen, 10))
